@@ -27,3 +27,7 @@ This project demonstrates how AI and data analytics techniques can be applied to
 2. Install dependencies:
    ```bash
    pip install flask requests pdfplumber pypdf PyPDF2
+3. Add your Groq API key in policy_app.py
+4. Run the app
+  '''bash
+   python policy_app.py
