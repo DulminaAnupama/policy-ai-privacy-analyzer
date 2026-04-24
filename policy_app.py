@@ -32,7 +32,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # ── API Key Setup 
 # Option 2 — Paste directly below:
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "") or "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "") or "enter_your_key"
 
 # Model to use 
 GROQ_MODEL = "llama-3.3-70b-versatile"
