@@ -31,3 +31,6 @@ This project demonstrates how AI and data analytics techniques can be applied to
 4. Run the app
   '''bash
    python policy_app.py
+   or
+   python app.py 
+   
