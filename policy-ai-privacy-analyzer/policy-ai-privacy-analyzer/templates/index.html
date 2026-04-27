@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PolicyAI — Privacy Policy Analyser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ══════ WELCOME OVERLAY ══════ -->
+<div id="welcomeOverlay">
+  <div class="welcome-box">
+    <div class="welcome-logo">🔒</div>
+    <h1>PolicyAI</h1>
+    <p class="subtitle">Privacy Policy Analyser &amp; Generator</p>
+    <div class="welcome-features">
+      <div class="wf-item">
+        <span class="wf-icon">📄</span>
+        <div>
+          <div class="wf-title">Smart Summarisation</div>
+          <div class="wf-desc">Upload, paste, or use pre-loaded policies — get a structured AI summary in seconds</div>
+        </div>
+      </div>
+      <div class="wf-item">
+        <span class="wf-icon">🎭</span>
+        <div>
+          <div class="wf-title">Scenario Generation</div>
+          <div class="wf-desc">Adapt any policy for children, enterprise, GDPR, healthcare &amp; custom contexts</div>
+        </div>
+      </div>
+      <div class="wf-item">
+        <span class="wf-icon">⚡</span>
+        <div>
+          <div class="wf-title">Groq-Powered AI</div>
+          <div class="wf-desc">Lightning-fast LLaMA 3.3 70B model — completely free to use</div>
+        </div>
+      </div>
+      <div class="wf-item">
+        <span class="wf-icon">📎</span>
+        <div>
+          <div class="wf-title">PDF Support</div>
+          <div class="wf-desc">Extract text directly from PDF files or paste policy text manually</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startApp()">🚀 Get Started</button>
+    <p class="welcome-footer">⚡ Powered by Groq AI · Free tier</p>
+  </div>
+</div>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">🔒</div>
+    <div>
+      <h1>PolicyAI — Privacy Analyser</h1>
+      <p>Privacy Policy Summarisation &amp; Scenario Generation</p>
+    </div>
+  </div>
+  <div class="badge">⚡ Powered by Groq AI (Free)</div>
+</header>
+
+<div class="workspace">
+
+  <!-- ══════ LEFT PANEL — POLICY SUMMARISATION ══════ -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-icon green">📄</div>
+      <div>
+        <h2>Policy Summarisation</h2>
+        <p>Upload, paste, or use the pre-loaded Netflix policy — then generate an AI summary covering goals, strategies &amp; direction</p>
+      </div>
+    </div>
+
+    <!-- Input source tabs -->
+    <div class="card">
+      <div class="card-title">📥 POLICY INPUT SOURCE</div>
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="switchTab('upload', event)">📎 Upload PDF</button>
+        <button class="tab-btn" onclick="switchTab('paste', event)">📝 Paste Text</button>
+        <button class="tab-btn" onclick="switchTab('preload', event)">🏛️ Pre-loaded</button>
+      </div>
+
+      <!-- Upload tab -->
+      <div id="tab-upload" class="tab-content active">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <span>📂</span>
+          <p><strong>Click to upload</strong> or drag &amp; drop a PDF</p>
+          <p style="font-size:0.7rem;margin-top:4px;color:var(--text-dim)">PDF files up to 16MB</p>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf" onchange="handleFile(event)">
+        <div id="uploadStatus"></div>
+      </div>
+
+      <!-- Paste tab -->
+      <div id="tab-paste" class="tab-content">
+        <label>Paste policy text below:</label>
+        <textarea id="pasteText" rows="7" placeholder="Paste your privacy policy or any policy document text here..."
+          oninput="document.getElementById('pasteChars').textContent=this.value.length.toLocaleString()"></textarea>
+        <div class="char-count"><span id="pasteChars">0</span> characters</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="usePasteText()">✓ Use This Text</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('pasteText').value='';document.getElementById('pasteChars').textContent='0'">✕ Clear</button>
+        </div>
+      </div>
+
+      <!-- Pre-loaded tab -->
+      <div id="tab-preload" class="tab-content">
+        <div style="background:var(--navy);border-radius:8px;padding:0.85rem;margin-bottom:0.75rem">
+          <p style="font-size:0.82rem;color:var(--green-light);font-weight:600;margin-bottom:4px">🔒 Pre-loaded privacy policy ready</p>
+          <p style="font-size:0.75rem;color:var(--text-muted)">Netflix Privacy Statement — April 17, 2025</p>
+          <p style="font-size:0.7rem;color:var(--text-dim);margin-top:3px;font-family:'JetBrains Mono',monospace">Data Collection · User Rights · Advertising · Cookies · Games</p>
+        </div>
+        <button class="btn btn-green" onclick="loadDefault()">🔒 Load Netflix Privacy Policy</button>
+      </div>
+    </div>
+
+    <!-- Active policy preview -->
+    <div class="card" id="previewCard" style="display:none">
+      <div class="card-title">
+        <span>📋 ACTIVE POLICY TEXT (editable)</span>
+        <button class="copy-btn" onclick="copyEl('activeText')">Copy</button>
+      </div>
+      <textarea id="activeText" rows="5"
+        oninput="activePolicyText=this.value;document.getElementById('activeChars').textContent=this.value.length.toLocaleString()"></textarea>
+      <div class="char-count"><span id="activeChars">0</span> characters loaded</div>
+    </div>
+
+    <!-- Generate summary button -->
+    <div id="sumStatus"></div>
+    <button class="btn btn-green btn-full" id="sumBtn" onclick="generateSummary()" disabled>
+      🔍 Generate Policy Summary
+    </button>
+
+    <!-- Summary output -->
+    <div class="card" id="summaryCard" style="margin-top:1rem;display:none">
+      <div class="card-title">
+        <span>📊 AI-GENERATED SUMMARY</span>
+        <div style="display:flex;gap:6px">
+          <button class="copy-btn" onclick="copyEl('summaryOut')">Copy</button>
+          <button class="copy-btn" style="color:var(--teal);border-color:var(--teal)"
+            onclick="document.getElementById('rightPanel').scrollIntoView({behavior:'smooth'})">→ Scenarios</button>
+        </div>
+      </div>
+      <div class="output-box" id="summaryOut"></div>
+    </div>
+  </div>
+
+  <!-- ══════ RIGHT PANEL — SCENARIO GENERATION ══════ -->
+  <div class="panel" id="rightPanel">
+    <div class="panel-header">
+      <div class="panel-icon teal">🎭</div>
+      <div>
+        <h2>Scenario-Based Policy Generation</h2>
+        <p>Select one or more scenarios and generate adapted policy drafts from the summary</p>
+      </div>
+    </div>
+
+    <!-- Scenario selector -->
+    <div class="card">
+      <div class="card-title">🎯 SELECT PREDEFINED SCENARIOS</div>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.75rem">
+        Each scenario changes the target audience, priorities, or constraints of the privacy policy. Select one or more, then click Generate.
+      </p>
+      <div class="scenario-grid" id="scenarioGrid">
+        {% for s in scenarios %}
+        <div class="chip" id="chip-{{ s.id }}" onclick="toggleChip('{{ s.id }}')">
+          <div class="chip-title">{{ s.emoji }} {{ s.name }}</div>
+          <div class="chip-sub">{{ s.audience }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="divider">OR DEFINE A CUSTOM SCENARIO</div>
+
+      <label class="mb">Custom Scenario Name:</label>
+      <input type="text" id="customName" placeholder="e.g., Public Sector / Government Agency" class="mb" style="margin-bottom:0.6rem">
+
+      <label class="mb">Custom Scenario Description:</label>
+      <textarea id="customDesc" rows="3"
+        placeholder="Describe the context, target audience, and key priorities for this scenario..." class="mb"></textarea>
+
+      <label style="margin-top:0.4rem">Additional Requirements (optional):</label>
+      <textarea id="customReqs" rows="2" placeholder="Any specific constraints, regulations, or emphasis areas..."></textarea>
+    </div>
+
+    <!-- Summary readiness indicator -->
+    <div class="card">
+      <div class="card-title">📋 SUMMARY STATUS</div>
+      <div id="summaryStatus" style="font-size:0.8rem;color:var(--text-muted);font-style:italic">
+        ⚠️ No summary yet — generate a summary in the left panel first.
+      </div>
+    </div>
+
+    <!-- Generate & clear buttons -->
+    <div id="genStatus"></div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem">
+      <button class="btn btn-teal btn-full" id="genBtn" onclick="generateScenarios()" disabled style="flex:1">
+        ⚡ Generate Selected Scenarios
+      </button>
+      <button class="btn btn-ghost" onclick="clearDrafts()" title="Clear all drafts" style="padding:0.7rem 0.9rem">✕</button>
+    </div>
+
+    <!-- Draft outputs -->
+    <div id="draftsContainer">
+      <div class="empty-state">
+        <span class="icon">📜</span>
+        <p>Adapted policy drafts will appear here.</p>
+        <p style="font-size:0.75rem;margin-top:0.3rem">Select scenarios above and click <strong>Generate</strong>.</p>
+        <p style="font-size:0.72rem;margin-top:0.5rem;color:var(--text-dim)">You can change scenarios and regenerate at any time.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /workspace -->
+
+<!-- Pass server-side data to JS -->
+<script>
+  const DEFAULT_POLICY = {{ default_policy | tojson }};
+  const SCENARIO_DATA = {
+    {% for s in scenarios %}
+    '{{ s.id }}': {
+      name: '{{ s.emoji }} {{ s.name }}',
+      description: `{{ s.description }}`
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
